@@ -32,11 +32,20 @@ export default class User extends compose(BaseModel, AuthFinder) {
   @column()
   declare isAdmin: boolean
 
+  @column()
+  declare accountStatus: ['pending', 'active', 'deleted']
+
+  @column()
+  declare softDelete: boolean
+
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime
 
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   declare updatedAt: DateTime | null
+
+  @column.dateTime({ autoCreate: false, autoUpdate: false })
+  declare softDeleteDate: DateTime | null
 
   static accessTokens = DbAccessTokensProvider.forModel(User)
 }
