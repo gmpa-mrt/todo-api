@@ -1,6 +1,6 @@
 import type { HttpContext } from '@adonisjs/core/http'
-
 import UserRepository from '#repositories/user_repository'
+import { createUserValidator, updateUserValidator } from '#validators/user'
 
 export default class UsersController {
   async index() {
@@ -19,9 +19,9 @@ export default class UsersController {
   }
 
   async create({ request, response }: HttpContext) {
-    const data = request.body()
+    const payload = await request.validateUsing(createUserValidator(1))
     try {
-      const user = await UserRepository.create(data)
+      const user = await UserRepository.create(payload)
       return response.created(user)
     } catch (e) {
       return response.badRequest({ message: e })
@@ -32,14 +32,24 @@ export default class UsersController {
     const isPatch = request.method() === 'PATCH'
 
     const data = isPatch
-      ? request.only(['lastName', 'firstName', 'email', 'password', 'avatar'])
-      : request.body()
+      ? request.only([
+          'lastName',
+          'firstName',
+          'email',
+          'password',
+          'avatar',
+          'isAdmin',
+          'statusAccount',
+        ])
+      : request.all()
+
+    const payload = await updateUserValidator(1).validate(data)
 
     try {
       const user = await UserRepository.findByOrFail('id', params.id)
 
       try {
-        await user.merge(data).save()
+        await user.merge(payload).save()
         return response.ok(user)
       } catch (e) {
         return response.badRequest({ message: e })
