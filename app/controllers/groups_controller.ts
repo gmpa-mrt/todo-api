@@ -26,11 +26,22 @@ export default class GroupsController {
     }
   }
 
-  /*  @todo to see how manage group name by the creator or rights and how manage users inside the group
-      update({ params, request, response }: HttpContext) {
-         //
+  async update({ params, request, response }: HttpContext) {
+    const data = request.all()
+
+    try {
+      const group = await GroupRepository.findOrFail('id', params.id)
+
+      try {
+        await group.merge(data).save()
+        return response.ok(group)
+      } catch (e) {
+        return response.badRequest(e)
       }
-  */
+    } catch {
+      return response.notFound('not found')
+    }
+  }
 
   async destroy({ params, response }: HttpContext) {
     try {
