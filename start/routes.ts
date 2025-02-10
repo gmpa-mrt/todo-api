@@ -11,6 +11,7 @@ import router from '@adonisjs/core/services/router'
 
 // API routes
 import '#start/api/users_route'
+import '#start/api/groups_route'
 
 // Test
 router.get('/', async () => {
