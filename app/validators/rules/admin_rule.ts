@@ -7,28 +7,26 @@ import { FieldContext } from '@vinejs/vine/types'
  */
 type Options = {
   table: string
-  column: string
-  userID: number
+  findBy: string
+  checkBy: string
 }
 
 /**
  * Implementation
  */
-async function admin(_value: unknown, options: Options, field: FieldContext) {
-  // Avoid to apply this rule if this field doesn't change
-  if (field.value === undefined || field.value === null) {
+async function admin_rule(value: unknown, options: Options, field: FieldContext) {
+  if (value !== true) {
     return
   }
-
   const row = await db
     .query()
-    .select(options.column)
+    .select(options.findBy)
     .from(options.table)
-    .where(options.column, options.userID)
-    .where('is_admin', true)
+    .where(options.findBy, field.meta.userId)
+    .andWhere(options.checkBy, true)
     .first()
 
-  if (row) {
+  if (!row) {
     field.report('You have not got the correct access', 'not allowed', field)
   }
 }
@@ -36,4 +34,4 @@ async function admin(_value: unknown, options: Options, field: FieldContext) {
 /**
  * Converting a function to a VineJS rule
  */
-export const adminRule = vine.createRule(admin)
+export const adminRule = vine.createRule(admin_rule)

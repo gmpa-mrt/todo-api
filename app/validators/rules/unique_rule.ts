@@ -3,7 +3,7 @@ import { FieldContext } from '@vinejs/vine/types'
 import db from '@adonisjs/lucid/services/db'
 
 /**
- * Options accepted by the unique rule
+ * Options accepted by the unique_rule rule
  */
 type Options = {
   table: string
@@ -13,7 +13,7 @@ type Options = {
 /**
  * Implementation
  */
-async function unique(value: unknown, options: Options, field: FieldContext) {
+async function unique_rule(value: unknown, options: Options, field: FieldContext) {
   /**
    * We do not want to deal with non-string
    * values. The "string" rule will handle the
@@ -38,4 +38,4 @@ async function unique(value: unknown, options: Options, field: FieldContext) {
 /**
  * Converting a function to a VineJS rule
  */
-export const uniqueRule = vine.createRule(unique)
+export const uniqueRule = vine.createRule(unique_rule)

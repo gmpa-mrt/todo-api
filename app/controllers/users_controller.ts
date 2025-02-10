@@ -1,6 +1,6 @@
 import type { HttpContext } from '@adonisjs/core/http'
 import UserRepository from '#repositories/user_repository'
-import { createUserValidator, updateUserValidator } from '#validators/user'
+import { createUserValidator, updateUserValidator } from '#validators/user_validator'
 
 export default class UsersController {
   async index() {
@@ -19,7 +19,11 @@ export default class UsersController {
   }
 
   async create({ request, response }: HttpContext) {
-    const payload = await request.validateUsing(createUserValidator(1))
+    const payload = await request.validateUsing(createUserValidator, {
+      meta: {
+        userId: 1,
+      },
+    })
     try {
       const user = await UserRepository.create(payload)
       return response.created(user)
@@ -43,7 +47,11 @@ export default class UsersController {
         ])
       : request.all()
 
-    const payload = await updateUserValidator(1).validate(data)
+    const payload = await updateUserValidator.validate(data, {
+      meta: {
+        userId: 1,
+      },
+    })
 
     try {
       const user = await UserRepository.findByOrFail('id', params.id)
