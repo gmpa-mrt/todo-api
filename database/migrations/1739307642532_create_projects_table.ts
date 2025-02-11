@@ -22,7 +22,7 @@ export default class extends BaseSchema {
 
       // Date time
       table.timestamp('created_at')
-      table.timestamp('created_at')
+      table.timestamp('updated_at')
       table.timestamp('archived_at')
     })
   }
