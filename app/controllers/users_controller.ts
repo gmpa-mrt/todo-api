@@ -1,15 +1,19 @@
 import type { HttpContext } from '@adonisjs/core/http'
 import UserRepository from '#repositories/user_repository'
 import { createUserValidator, updateUserValidator } from '#validators/user_validator'
+import { inject } from '@adonisjs/core'
 
+@inject()
 export default class UsersController {
+  constructor(private userRepository: UserRepository) {}
+
   async index() {
-    return UserRepository.all()
+    return this.userRepository.getAll()
   }
 
   async show({ params, response }: HttpContext) {
     try {
-      const user = await UserRepository.findByOrFail('id', params.id)
+      const user = await this.userRepository.findByIdOrFail(params.id)
       return response.ok(user)
     } catch {
       return response.notFound({
@@ -25,7 +29,7 @@ export default class UsersController {
       },
     })
     try {
-      const user = await UserRepository.create(payload)
+      const user = await this.userRepository.createUser(payload)
       return response.created(user)
     } catch (e) {
       return response.badRequest({ message: e })
@@ -54,7 +58,7 @@ export default class UsersController {
     })
 
     try {
-      const user = await UserRepository.findByOrFail('id', params.id)
+      const user = await this.userRepository.findByIdOrFail(params.id)
 
       try {
         await user.merge(payload).save()
@@ -69,7 +73,7 @@ export default class UsersController {
 
   async destroy({ params, response }: HttpContext) {
     try {
-      const user = await UserRepository.findByOrFail('id', params.id)
+      const user = await this.userRepository.findByIdOrFail(params.id)
 
       try {
         await user.delete()
