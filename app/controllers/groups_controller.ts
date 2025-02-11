@@ -1,15 +1,19 @@
 import type { HttpContext } from '@adonisjs/core/http'
 
 import GroupRepository from '#repositories/group_repository'
+import { inject } from '@adonisjs/core'
 
+@inject()
 export default class GroupsController {
+  constructor(private groupRepository: GroupRepository) {}
+
   async index() {
-    return GroupRepository.all()
+    return this.groupRepository.getAll()
   }
 
   async show({ params, response }: HttpContext) {
     try {
-      const group = await GroupRepository.findByOrFail('id', params.id)
+      const group = await this.groupRepository.findByIdOrFail(params.id)
       return response.ok(group)
     } catch {
       return response.notFound('not found')
@@ -19,7 +23,7 @@ export default class GroupsController {
   async create({ request, response }: HttpContext) {
     const data = request.all()
     try {
-      const newGroup = await GroupRepository.create(data)
+      const newGroup = await this.groupRepository.createGroup(data)
       return response.created(newGroup)
     } catch (e) {
       return response.badRequest(e)
@@ -30,7 +34,7 @@ export default class GroupsController {
     const data = request.all()
 
     try {
-      const group = await GroupRepository.findOrFail('id', params.id)
+      const group = await this.groupRepository.findByIdOrFail(params.id)
 
       try {
         await group.merge(data).save()
@@ -45,7 +49,7 @@ export default class GroupsController {
 
   async destroy({ params, response }: HttpContext) {
     try {
-      const group = await GroupRepository.findByOrFail('id', params.id)
+      const group = await this.groupRepository.findByIdOrFail(params.id)
 
       try {
         await group.delete()
