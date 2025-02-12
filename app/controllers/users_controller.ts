@@ -7,6 +7,15 @@ import { inject } from '@adonisjs/core'
 export default class UsersController {
   constructor(private userRepository: UserRepository) {}
 
+  async getCurrentUser({ auth, response }: HttpContext) {
+    try {
+      const user = auth.getUserOrFail()
+      return response.ok(user)
+    } catch (error) {
+      return response.unauthorized({ error: 'User not found' })
+    }
+  }
+
   async index() {
     return this.userRepository.getAll()
   }

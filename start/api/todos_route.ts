@@ -1,4 +1,5 @@
 import router from '@adonisjs/core/services/router'
+import { middleware } from '#start/kernel'
 
 const TodoController = () => import('#controllers/todos_controller')
 
@@ -13,3 +14,8 @@ router
     router.delete('todo/:id', [TodoController, 'destroy'])
   })
   .prefix('/api')
+  .use(
+    middleware.auth({
+      guards: ['api'],
+    })
+  )
