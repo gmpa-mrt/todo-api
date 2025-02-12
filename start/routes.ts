@@ -13,6 +13,7 @@ import router from '@adonisjs/core/services/router'
 import '#start/api/users_route'
 import '#start/api/groups_route'
 import '#start/api/projects_route'
+import '#start/api/todos_route'
 
 // Test
 router.get('/', async () => {
