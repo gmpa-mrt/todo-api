@@ -1,4 +1,5 @@
 import router from '@adonisjs/core/services/router'
+import { middleware } from '#start/kernel'
 
 const GroupController = () => import('#controllers/groups_controller')
 
@@ -12,3 +13,8 @@ router
     router.delete('group/:id', [GroupController, 'destroy'])
   })
   .prefix('/api')
+  .use(
+    middleware.auth({
+      guards: ['api'],
+    })
+  )
